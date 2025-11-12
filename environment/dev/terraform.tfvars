@@ -112,6 +112,30 @@ vm_info = {
     rg_name                = "rg-key-vault"
     username_secret_key    = ""
     pwd_secret_key         = ""
+    custom_data            = <<-EOT
+    #!/bin/bash
+    sudo apt update -y
+    sudo apt install nginx -y
+    sudo systemctl enable nginx
+    sudo systemctl start nginx
+  EOT
+  }
+
+  "vmforfrontend" = {
+    resource_group_name    = "rg-bhavya"
+    location               = "centralindia"
+    network_interface_name = "nicforfrontend"
+    os_disk_name           = "frontend-disk"
+    size                   = "Standard_B2s"
+    publisher              = "Canonical"
+    offer                  = "0001-com-ubuntu-server-jammy"
+    sku                    = "22_04-lts"
+    version                = "latest"
+    nic_name               = "nicforfrontend"
+    key_vault_name         = ""
+    rg_name                = "rg-key-vault"
+    username_secret_key    = ""
+    pwd_secret_key         = ""
   }
 }
 

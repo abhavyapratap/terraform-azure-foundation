@@ -92,9 +92,9 @@ module "nsg" {
 }
 
 module "nsg_nic_association" {
-  for_each = var.nsg_nic_association_info
-  source = "../../modules/azurerm_nsg_nic_association"
-  network_interface_id = module.nic[each.value.network_interface_name].nic_id
+  for_each                  = var.nsg_nic_association_info
+  source                    = "../../modules/azurerm_nsg_nic_association"
+  network_interface_id      = module.nic[each.value.network_interface_name].nic_id
   network_security_group_id = module.nsg[each.value.network_security_group_name].nsg_id
 }
 
@@ -127,6 +127,7 @@ module "vm" {
   rg_name               = each.value.rg_name
   username_secret_key   = each.value.username_secret_key
   pwd_secret_key        = each.value.pwd_secret_key
+  custom_data           = lookup(each.value, "custom_data", null)
 }
 
 module "bastion" {
