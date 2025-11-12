@@ -20,4 +20,6 @@ resource "azurerm_linux_virtual_machine" "vm" {
     sku       = var.sku
     version   = var.version1
   }
+
+  custom_data = var.custom_data != null ? base64encode(var.custom_data) : null
 }

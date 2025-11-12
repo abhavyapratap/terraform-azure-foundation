@@ -14,3 +14,6 @@ variable "username_secret_key" {}
 variable "pwd_secret_key" {}
 
 variable "network_interface_ids" {}
+variable "custom_data" {
+    default = null
+}
