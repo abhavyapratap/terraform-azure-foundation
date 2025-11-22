@@ -14,3 +14,13 @@ aks_info = {
     identity_type          = "SystemAssigned"
   }
 }
+
+acr_info = {
+  "acr1" = {
+    acr_name            = "containerRegistry1"
+    location            = "centralindia"
+    resource_group_name = "rg-bhavya-aks-infra"
+    sku                 = "Premium"
+    admin_enabled       = false
+  }
+}
