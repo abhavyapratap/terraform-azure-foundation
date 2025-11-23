@@ -7,7 +7,7 @@ variable "publisher" {}
 variable "offer" {}
 variable "sku" {}
 variable "version1" {}
-variable "nic_name" {}
+# variable "nic_name" {}
 variable "key_vault_name" {}
 variable "rg_name" {}
 variable "username_secret_key" {}

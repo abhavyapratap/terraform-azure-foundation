@@ -3,23 +3,23 @@ module "rg" {
   rg_info = var.rg_info
 }
 
-module "stg" {
-  for_each            = var.stg_info
-  depends_on          = [module.rg]
-  source              = "../../modules/azurerm_storage_account"
-  stg_info            = var.stg_info
-  name                = each.value.name
-  resource_group_name = each.value.resource_group_name
-  location            = each.value.location
-}
+# module "stg" {
+#   for_each            = var.stg_info
+#   depends_on          = [module.rg]
+#   source              = "../../modules/azurerm_storage_account"
+#   stg_info            = var.stg_info
+#   name                = each.value.name
+#   resource_group_name = each.value.resource_group_name
+#   location            = each.value.location
+# }
 
-module "container" {
-  for_each           = var.container_info
-  source             = "../../modules/azurerm_container"
-  container_name     = each.value.name
-  container_info     = var.container_info
-  storage_account_id = module.stg[each.value.storage_account].storage_account_id
-}
+# module "container" {
+#   for_each           = var.container_info
+#   source             = "../../modules/azurerm_container"
+#   container_name     = each.value.name
+#   container_info     = var.container_info
+#   storage_account_id = module.stg[each.value.storage_account].storage_account_id
+# }
 
 # output "container_ids" {
 #   value = module.container
@@ -44,6 +44,15 @@ module "database" {
   source        = "../../modules/azurerm_database"
   database_name = each.key
   server_id     = module.server[each.value.server_name].server_id
+}
+
+module "firewall" {
+  depends_on = [ module.rg ]
+  for_each = var.firewall_info
+  source        = "../../modules/azurerm_mssql_firewall_rule"
+  firewall_name = each.value.firewall_name
+  server_id     = module.server[each.value.server_id].server_id
+  vm_ip         = module.pip[each.value.vm_ip].backend_ip_address
 }
 
 # output "server_ids" {
@@ -78,6 +87,7 @@ module "nic" {
   resource_group_name   = each.value.resource_group_name
   ip_configuration_name = each.value.ip_configuration_name
   subnet_id             = module.subnet[each.value.subnet_name].subnet_id
+  public_ip = module.pip[each.value.public_ip].public_ip
 }
 
 module "nsg" {
@@ -122,7 +132,6 @@ module "vm" {
   offer                 = each.value.offer
   sku                   = each.value.sku
   version1              = each.value.version
-  nic_name              = each.value.nic_name
   key_vault_name        = each.value.key_vault_name
   rg_name               = each.value.rg_name
   username_secret_key   = each.value.username_secret_key
@@ -130,17 +139,17 @@ module "vm" {
   custom_data           = lookup(each.value, "custom_data", null)
 }
 
-module "bastion" {
-  depends_on            = [module.subnet, module.pip]
-  for_each              = var.bastion_info
-  source                = "../../modules/azurerm_bastion"
-  bastion_name          = each.key
-  location              = each.value.location
-  resource_group_name   = each.value.resource_group_name
-  ip_configuration_name = each.value.ip_configuration_name
-  public_ip_address_id  = module.pip[each.value.public_ip_name].public_ip
-  subnet_id             = module.subnet[each.value.subnet_name].subnet_id
-}
+# module "bastion" {
+#   depends_on            = [module.subnet, module.pip]
+#   for_each              = var.bastion_info
+#   source                = "../../modules/azurerm_bastion"
+#   bastion_name          = each.key
+#   location              = each.value.location
+#   resource_group_name   = each.value.resource_group_name
+#   ip_configuration_name = each.value.ip_configuration_name
+#   public_ip_address_id  = module.pip[each.value.public_ip_name].public_ip
+#   subnet_id             = module.subnet[each.value.subnet_name].subnet_id
+# }
 
 # output "pip_ids" {
 #   value = module.pip["pipforbastion"].public_ip
